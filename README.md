@@ -92,3 +92,16 @@ Navigation for dom-based apps (we want this)
     The server does not know what to do with the path /pagetwo? We are making a request to our server for the route /pagetwo, our react dev server returns automatically the index.html. 
 
     It sees the script link tag that contains our app code, react router loads up, the history object that is created by the browser router loads up, inspects the current URL, inspects the current URL SEES where at the route '/pagetwo' and the browserRouter tells <Route>'s we're at <PageTwo> so render yourself appropiately.
+
+    Any component that is not a child of a Router.
+    Show a link that is outside of our BrowserRouter can not contain any react-router related components.
+
+    App 
+    
+    v
+
+    BrowserRouter
+
+    v
+
+    Routes & Header & LoginButton
