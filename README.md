@@ -1,68 +1,94 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Stream App
 
-## Available Scripts
 
-In the project directory, you can run:
+-   react-router-dom    
+Navigation for dom-based apps (we want this)
 
-### `npm start`
+-   react-router-redux
+    Bindings between Redux and React Router (not necessary)
+    
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+    React Router only cares about the characters after 
+    the domain and port definition.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+    When we created an application and loaded,
+    An instance of BrowserRouter - it listens to 'history' for changes to the URL
+    [history] Keeps track of the address bar in your browser.
+    
+    [History] object is communicating that path over to BrowserRouter and BR will communicate that path to both Route components visible only when "path" matches the current URL. 
 
-### `npm test`
+    [ Address Bar myapp:8000/ ] > [ / ]
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    - < Route path="/" component={One} />
 
-### `npm run build`
+    The rule that decides what component shows
+    on the screen is by this code right here
+    `
+    extractedPath.contains(path)
+    `
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    Does extracted path contain 
+    <Route path="/page" component={Two}/>
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+    If I go to domain/page , "/page" 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    It does contain , this string does contain that string though it would show that component, 
+    move on to the next component and then it would show that.
 
-### `npm run eject`
+    With 'exact' keyword. Does route '/' exactly equals
+    {PageOne}. It does, it will be shown on the screen.
+    A path with '/' with no 'exact' keyword will be shown on the screen.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+    No Anchor tags with react-router
+    # Bad Navigation
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    You add an <a/> tag to your application with 
+    href='/pagetwo' and click it
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+    Your browser makes a request to localhost:3000
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    Development server responds with index.html file
 
-## Learn More
+    Browser receives index.html file, dumps old HTML file it was showing (including all of your React/Redux state data!)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    index.html file lists our JS files in script tags - browser downloads and executes these scripts
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    ### What We Want
 
-### Code Splitting
+    - Users wants to navigate to another page in our app
+    - User clicks a 'Link' tag
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+    - React Router prevents the browser from navigating to the new page and fetching new index.html file!
+    URL Still changes
+    'History' sees updated URL, takes URL and sends it to BrowserRouter
 
-### Analyzing the Bundle Size
+    BrowserRouter communicates the URL to Route components
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+    Route components rerender to show new set of components..
+    React router is going to detect a click and showing and hiding components, not making a seperate request.    
 
-### Making a Progressive Web App
+    # Different Routers
+    
+    [BrowserRouter] Uses everything after the TLD (.com, .net ) or port as the 'path'
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+    [HashRouter] Uses everything after a # as the 'path'
+    '/#/' injected automatically
 
-### Advanced Configuration
+    [MemoryRouter] Doesn't use the URL to track navigation URL doesn't updates at all as I navigate through the application
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+    Looking for content for the route '/pagetwo'? 
+    
+    A normal web server would respond with 404.
 
-### Deployment
+    [Create-React-App] Web Dev Server
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+    * Do I have anything special for /pagetwo ?
 
-### `npm run build` fails to minify
+    * Check dev resources
+    * Check public dir
+    [ Nope, ok, guess I'll serve up the index.html file
+    ]
+    That is the total key of how the BrowserRouter works.
+    The server does not know what to do with the path /pagetwo? We are making a request to our server for the route /pagetwo, our react dev server returns automatically the index.html. 
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+    It sees the script link tag that contains our app code, react router loads up, the history object that is created by the browser router loads up, inspects the current URL, inspects the current URL SEES where at the route '/pagetwo' and the browserRouter tells <Route>'s we're at <PageTwo> so render yourself appropiately.
